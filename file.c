@@ -35,8 +35,12 @@ int fileread(int f, int n)
 
 	if (restflag)		/* don't allow this command if restricted */
 		return resterr();
-	if ((s = mlreply("Read file: ", fname, NFILEN)) != TRUE)
-		return s;
+	if ((s = mlreply("Read file: ", fname, NFILEN)) != TRUE) {
+		if (curbp->b_fname[0] == 0)
+			return s;
+
+		return readin(curbp->b_fname, TRUE);
+	}
 	return readin(fname, TRUE);
 }
 
