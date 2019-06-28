@@ -279,14 +279,8 @@ static int is_new_para(void)
 	for (i = 0; i < len; i++) {
 		int c = lgetc(curwp->w_dotp, i);
 		if (c == ' ' || c == TAB) {
-#if PKCODE
-			if (justflag)
-				continue;
-#endif
-			return 1;
+			continue;
 		}
-		if (!isletter(c))
-			return 1;
 		return 0;
 	}
 	return 1;
@@ -324,8 +318,9 @@ int gotobop(int f, int n)
 
 		/* and then forward until we are in a word */
 		suc = forwchar(FALSE, 1);
-		while (suc && !inword())
+		while (suc && !inword()) {
 			suc = forwchar(FALSE, 1);
+		}
 	}
 	curwp->w_flag |= WFMOVE;	/* force screen update */
 	return TRUE;
