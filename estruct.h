@@ -11,27 +11,11 @@
 #define MAXCOL	500
 #define MAXROW	500
 
-#ifdef	MSDOS
-#undef	MSDOS
-#endif
-#ifdef	EGA
-#undef	EGA
-#endif
-#ifdef	CTRLZ
-#undef	CTRLZ
-#endif
-
 /* Machine/OS definitions. */
 
-#if defined(AUTOCONF) || defined(MSDOS) || defined(BSD) || defined(SYSV) || defined(VMS)
+#if defined(AUTOCONF) || defined(BSD) || defined(SYSV) || defined(VMS)
 
 /* Make an intelligent guess about the target system. */
-
-#if defined(__TURBOC__)
-#define MSDOS 1 /* MS/PC DOS 3.1-4.0 with Turbo C 2.0 */
-#else
-#define	MSDOS 0
-#endif
 
 #if defined(BSD) || defined(sun) || defined(ultrix) || (defined(vax) && defined(unix)) || defined(ultrix) || defined(__osf__)
 #ifndef BSD
@@ -63,7 +47,6 @@
 
 #else
 
-#define MSDOS   1		/* MS-DOS                       */
 #define V7      0		/* V7 UNIX or Coherent or BSD4.2 */
 #define	BSD	0		/* UNIX BSD 4.2 and ULTRIX      */
 #define	USG	0		/* UNIX system V                */
@@ -75,14 +58,10 @@
 
 /*	Compiler definitions			*/
 #define	UNIX	0		/* a random UNIX compiler */
-#define	MSC	0		/* MicroSoft C compiler, versions 3 up */
-#define	TURBO	1		/* Turbo C/MSDOS */
 
 #else
 
 #define	UNIX	(V7 | BSD | USG)
-#define	MSC	0
-#define	TURBO	MSDOS
 
 #endif				/*autoconf */
 
@@ -104,7 +83,6 @@
 #define	VMSVT	0		/* various VMS terminal entries */
 #define VT52    0		/* VT52 terminal (Zenith).      */
 #define TERMCAP 0		/* Use TERMCAP                  */
-#define	IBMPC	1		/* IBM-PC CGA/MONO/EGA driver   */
 
 #else
 
@@ -115,7 +93,6 @@
 #define	VMSVT	VMS
 #define	VT52	0
 #define	TERMCAP	UNIX
-#define	IBMPC	MSDOS
 
 #endif /* Autoconf. */
 
@@ -127,7 +104,6 @@
 #define	TYPEAH	1  /* type ahead causes update to be skipped       */
 #define DEBUGM	1  /* $debug triggers macro debugging              */
 #define	VISMAC	0  /* update display during keyboard macros        */
-#define	CTRLZ	0  /* add a ^Z at end of files under MSDOS only    */
 #define ADDCR	0  /* ajout d'un CR en fin de chaque ligne (ST520) */
 #define	NBRACE	1  /* new style brace matching command             */
 #define	REVSTA	1  /* Status line appears in reverse video         */
@@ -139,7 +115,6 @@
 
 #else
 
-#define	COLOR	MSDOS
 #ifdef  SVR4
 #define FILOCK  1
 #else
@@ -173,32 +148,14 @@
 #endif /* Autoconf. */
 
 #define	PKCODE	1      /* include my extensions P.K., define always    */
-#define	IBMCHR	MSDOS  /* use IBM PC character set P.K.                */
 #define SCROLLCODE 1   /* scrolling code P.K.                          */
 
 /* System dependant library redefinitions, structures and includes. */
-
-#if TURBO
-#include <dos.h>
-#include <mem.h>
-#undef peek
-#undef poke
-#define       peek(a,b,c,d)   movedata(a,b,FP_SEG(c),FP_OFF(c),d)
-#define       poke(a,b,c,d)   movedata(FP_SEG(c),FP_OFF(c),a,b,d)
-#endif
 
 #if	VMS
 #define	atoi	xatoi
 #define	abs	xabs
 #define	getname	xgetname
-#endif
-
-#if MSDOS & MSC
-#include	<dos.h>
-#include	<memory.h>
-#define	peek(a,b,c,d)	movedata(a,b,FP_SEG(c),FP_OFF(c),d)
-#define	poke(a,b,c,d)	movedata(FP_SEG(c),FP_OFF(c),a,b,d)
-#define	movmem(a, b, c)		memcpy(b, a, c)
 #endif
 
 #if	VMS
@@ -207,13 +164,9 @@
 
 /* Define some ability flags. */
 
-#if	IBMPC
-#define	MEMMAP	1
-#else
 #define	MEMMAP	0
-#endif
 
-#if	MSDOS | V7 | USG | BSD
+#if	V7 | USG | BSD
 #define	ENVFUNC	1
 #else
 #define	ENVFUNC	0
@@ -352,14 +305,6 @@
 #define LASTLL 'z'
 #endif
 
-#if	IBMCHR
-
-#define isletter(c)	(('a' <= c && LASTLL >= c) || ('A' <= c && LASTUL >= c) || (128<=c && c<=167))
-#define islower(c)	(('a' <= c && LASTLL >= c))
-#define isupper(c)	(('A' <= c && LASTUL >= c))
-
-#else
-
 #define isletter(c)	isxletter((0xFF & (c)))
 #define islower(c)	isxlower((0xFF & (c)))
 #define isupper(c)	isxupper((0xFF & (c)))
@@ -367,8 +312,6 @@
 #define isxletter(c)	(('a' <= c && LASTLL >= c) || ('A' <= c && LASTUL >= c) || (192<=c && c<=255))
 #define isxlower(c)	(('a' <= c && LASTLL >= c) || (224 <= c && 252 >= c))
 #define isxupper(c)	(('A' <= c && LASTUL >= c) || (192 <= c && 220 >= c))
-
-#endif
 
 #endif
 
