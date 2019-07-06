@@ -13,7 +13,10 @@
 #include "efunc.h"
 #include "line.h"
 
-int tabsize; /* Tab size (0: use real tabs) */
+/*
+ * TODO: write a function to determine tabsize for current file
+ */
+int tabsize = 2; /* Tab size (0: use real tabs) */
 
 /*
  * Set fill column to n.
@@ -258,7 +261,7 @@ int insert_tab(int f, int n)
 	}
 	if (!tabsize)
 		return linsert(1, '\t');
-	return linsert(tabsize - (getccol(FALSE) % tabsize), ' ');
+	return linsert(tabsize, ' ');
 }
 
 #if	AEDIT
